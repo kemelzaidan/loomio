@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151104223007) do
+ActiveRecord::Schema.define(version: 20151118012830) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -83,6 +83,15 @@ ActiveRecord::Schema.define(version: 20151104223007) do
   end
 
   add_index "blacklisted_passwords", ["string"], name: "index_blacklisted_passwords_on_string", using: :hash
+
+  create_table "blog_stories", force: :cascade do |t|
+    t.string   "title"
+    t.string   "url"
+    t.string   "image_url"
+    t.datetime "published_at"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+  end
 
   create_table "campaigns", force: :cascade do |t|
     t.string   "showcase_url",  limit: 255
@@ -265,13 +274,6 @@ ActiveRecord::Schema.define(version: 20151104223007) do
   add_index "discussions", ["last_activity_at"], name: "index_discussions_on_last_activity_at", order: {"last_activity_at"=>:desc}, using: :btree
   add_index "discussions", ["private"], name: "index_discussions_on_private", using: :btree
 
-  create_table "drafts", force: :cascade do |t|
-    t.integer "user_id"
-    t.integer "draftable_id"
-    t.string  "draftable_type"
-    t.json    "payload",        default: {}, null: false
-  end
-
   create_table "events", force: :cascade do |t|
     t.string   "kind",           limit: 255
     t.datetime "created_at"
@@ -440,8 +442,8 @@ ActiveRecord::Schema.define(version: 20151104223007) do
     t.integer  "default_group_cover_id"
     t.integer  "subscription_id"
     t.integer  "motions_count",                                  default: 0,              null: false
-    t.integer  "admin_memberships_count",                        default: 0,              null: false
     t.integer  "invitations_count",                              default: 0,              null: false
+    t.integer  "admin_memberships_count",                        default: 0,              null: false
   end
 
   add_index "groups", ["category_id"], name: "index_groups_on_category_id", using: :btree
