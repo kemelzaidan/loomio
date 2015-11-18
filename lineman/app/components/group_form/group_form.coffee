@@ -3,9 +3,6 @@ angular.module('loomioApp').factory 'GroupForm', ->
   controller: ($scope, $rootScope, $location, group, FormService, Records, $translate, PrivacyString) ->
     $scope.group = group.clone()
 
-    $scope.$on 'modal.closing', (event) ->
-      FormService.confirmDiscardChanges(event, $scope.group)
-
     $scope.i18n = do ->
       groupMessaging = {}
       if $scope.group.isParent()
@@ -33,6 +30,7 @@ angular.module('loomioApp').factory 'GroupForm', ->
         'group_form.messages.group_updated'
 
     submitForm = FormService.submit $scope, $scope.group,
+      allowDrafts: true
       flashSuccess: successMessage()
       successCallback: (response) ->
         if $scope.group.isNew()
