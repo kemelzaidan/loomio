@@ -698,6 +698,7 @@ DEPENDENCIES
   factory_girl_rails
   faker
   fog
+  fog-local
   font-awesome-sass (~> 4.3.2)
   foreman
   friendly_id (~> 5.1.0)

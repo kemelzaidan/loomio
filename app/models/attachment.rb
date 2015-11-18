@@ -2,9 +2,10 @@ class Attachment < ActiveRecord::Base
   belongs_to :user
   belongs_to :comment, counter_cache: true
 
-  validates_presence_of :filename, :location, :user_id
+  has_attached_file :file
+  do_not_validate_attachment_file_type :file
 
-  before_destroy :delete_from_storage
+  validates :user_id, presence: true
 
   alias_method :author, :user
   alias_method :author=, :user=
@@ -24,22 +25,15 @@ class Attachment < ActiveRecord::Base
   end
 
   def filetype
-    filename.split('.').last.downcase
+    (file_content_type.try(:split, '/') || filename.try(:split, '.')).last.downcase
   end
 
-  def delete_from_storage
-    storage = Fog::Storage.new({aws_access_key_id: Rails.application.secrets.aws_access_key_id,
-                                aws_secret_access_key: Rails.application.secrets.aws_secret_access_key,
-                                provider: 'AWS'})
+  def location
+    super || file.url
+  end
 
-    bucket = storage.directories.get(Rails.application.secrets.aws_bucket)
-    filename = URI.decode(URI(URI.encode(self.location)).path).gsub(/^\//, '')
-    file = bucket.files.get(filename)
-
-    file.destroy if file
-    true # return no true no matter what.
+  def filesize
+    super || file_file_size
   end
 
 end
-
-
